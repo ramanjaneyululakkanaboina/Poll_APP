@@ -1,5 +1,9 @@
 /* ---------------- NAVBAR ---------------- */
 .navbar {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
     background: #0D5C6B;
     padding: 15px 30px;
     height: 50px;
@@ -7,7 +11,7 @@
     color: white;
     display: flex;
     align-items: center;
-    margin: 10px 5px;
+    
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);  
 }
 
@@ -15,7 +19,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    
+    margin-bottom: 30px;
 }
 
 
@@ -54,22 +58,25 @@
 
 /* ---------------- GLOBAL ---------------- */
 body {
-     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f8f9fa;
     margin: 0;
     padding: 0;
     color: #333;
+    
 }
 
 .container {
     max-width: 900px;
     margin: 0px auto;
+    margin-top: 50px;
     padding: 20px;
 }
 
 .page-title {
     text-align: center;
     margin: 30px 0 20px;
+    margin-top: 0px;
     font-size: 32px;
     color: #0D5C6B;
     font-weight: 700;
