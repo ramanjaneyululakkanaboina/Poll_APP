@@ -1,0 +1,28 @@
+{% extends "home.html" %}
+{% block title %}Vote - {{ question.question_text }}{% endblock %}
+
+{% block content %}
+<div class="vote-container">
+    <h2 class="vote-title">🗳️ {{ question.question_text }}</h2>
+
+    <form action="{% url 'vote' question.id %}" method="post">
+        {% csrf_token %}
+        
+        <div class="choices-list">
+            {% for choice in question.choice_set.all %}
+                <div class="choice-item">
+                    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label>
+                </div>
+            {% empty %}
+                <p>No choices available for this poll.</p>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">✅ Vote</button>
+            <!-- <a href="{% url 'index' %}" class="btn-cancel">❌ Cancel</a> -->
+        </div>
+    </form>
+</div>
+{% endblock %}

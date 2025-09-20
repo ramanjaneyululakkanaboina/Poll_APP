@@ -1,0 +1,22 @@
+{% extends "home.html" %}
+{% block title %}View Votes{% endblock %}
+
+{% block content %}
+<div class="poll-card">
+    <h2>📊 Poll Results</h2>
+
+    {% if latest_question %}
+        <ul>
+            {% for question in latest_question %}
+                <li>
+                    <a href="{% url 'results' question.id %}" class="btn-link">{{ question.question_text }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+
+    <a href="{% url 'index' %}" class="btn btn-primary">← Back to Home</a>
+</div>
+{% endblock %}

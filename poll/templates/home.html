@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Poll App{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'poll/style.css' %}">
+</head>
+<body>
+
+    
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'index' %}" class="nav-logo">PollsApp</a>
+            <ul class="nav-links">
+                <li><a href="{% url 'index' %}">Home</a></li>
+
+                {% if user.is_authenticated %}
+                    {% if user.role == 'admin' %}
+                        <li><a href="{% url 'create_poll' %}">+ Create Poll</a></li>
+                        <li><a href="{% url 'view_votes' %}">View Votes</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'signup' %}">Signup</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>

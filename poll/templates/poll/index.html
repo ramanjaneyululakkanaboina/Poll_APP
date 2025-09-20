@@ -1,0 +1,33 @@
+{% extends "home.html" %}
+{% block title %}Home - Polls{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title"> Welcome to the Polls App</h1>
+
+    {% if user.is_authenticated %}
+        {% if user.role == "admin" %}
+            
+            <div class="button-group">
+                <a href="{% url 'create_poll' %}" class="btn btn-success">+ Create Poll</a>
+                <a href="{% url 'view_votes' %}" class="btn btn-primary">📊 View Votes</a>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <hr>
+
+    
+    <h3 class="section-title">Latest Polls</h3>
+    <div class="list">
+        {% for question in latest_question %}
+            <a href="{% url 'detail' question.id %}" class="list-item">
+                <h5>{{ question.question_text }}</h5>
+                <small class="muted">Published on {{ question.pub_date|date:"M d, Y" }}</small>
+            </a>
+        {% empty %}
+            <p>No polls available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "home.html" %}
+{% block title %}Create Poll{% endblock %}
+
+{% block content %}
+<div class="poll-card">
+    <h2>📝 Create a New Poll</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ question_form.errors }}
+        {% if error_message %}
+            <p class="error">{{ error_message }}</p>
+        {% endif %}
+
+        
+        <label>{{ question_form.question_text.label }}</label>
+        {{ question_form.question_text }}
+
+        <label>{{ question_form.pub_date.label }}</label>
+        {{ question_form.pub_date }}
+
+        
+        <label for="num_choices">Number of Choices:</label>
+        <input type="number" id="num_choices" name="num_choices" min="2" max="10"
+               placeholder="Enter number of choices" required>
+
+        
+        <div class="choices">
+            <h4>Choices:</h4>
+            <div id="choices-container"></div>
+        </div>
+
+        
+        ..
+        <button type="submit" class="btn-submit">Create Poll</button>
+    </form>
+</div>
+
+<script>
+    const numChoicesInput = document.getElementById("num_choices");
+    const choicesContainer = document.getElementById("choices-container");
+
+    numChoicesInput.addEventListener("input", function() {
+        const numChoices = parseInt(numChoicesInput.value) || 0;
+        choicesContainer.innerHTML = "";
+
+        for (let i = 1; i <= numChoices; i++) {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.name = `choice_${i}`; 
+            input.placeholder = `Choice ${i}`;
+            input.required = true;
+            choicesContainer.appendChild(input);
+        }
+    });
+</script>
+{% endblock %}

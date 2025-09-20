@@ -1,0 +1,23 @@
+{% extends "home.html" %}
+{% block title %}Results - {{ question.question_text }}{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <h2 class="results-title">📊 Results for: <span>{{ question.question_text }}</span></h2>
+
+    <ul class="results-list">
+        {% for choice in question.choice_set.all %}
+            <li class="results-item">
+                <span class="choice-text">{{ choice.choice_text }}</span>
+                <span class="votes">{{ choice.votes }} votes</span>
+            </li>
+        {% empty %}
+            <p>No choices available for this poll.</p>
+        {% endfor %}
+    </ul>
+
+    <div class="back-link">
+        <a href="{% url 'view_votes' %}" class="btn btn-primary">⬅ Back to View Voting</a>
+    </div>
+</div>
+{% endblock %}
