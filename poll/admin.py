@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Question, Choice,CustomUser
+from .models import *
 
 
 @admin.action(description='Activate Selected Tickets')
@@ -13,7 +13,7 @@ def deactivate_tickets(modeladmin, request, queryset):
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ("question_text", "pub_date", "is_active")
     search_fields = ["question_text", "pub_date"]
-    list_filter = ("pub_date","is_active")
+    list_filter = ("pub_date","is_active", "category")
     actions = [activate_tickets, deactivate_tickets]
     
 admin.site.register(Question, QuestionAdmin)
@@ -30,3 +30,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_filter = ['role']
     search_fields = ["role"]
 admin.site.register(CustomUser, CustomUserAdmin)
+
+admin.site.register(Category)
+
+admin.site.register(Survey)

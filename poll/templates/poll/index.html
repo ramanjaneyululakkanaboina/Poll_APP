@@ -7,27 +7,43 @@
 
     {% if user.is_authenticated %}
         {% if user.role == "admin" %}
-            
             <div class="button-group">
                 <a href="{% url 'create_poll' %}" class="btn btn-success">+ Create Poll</a>
                 <a href="{% url 'view_votes' %}" class="btn btn-primary">📊 View Votes</a>
+                <a href="{% url 'create_survey' %}" class="btn btn-primary">🧠 Create Survey</a>
+                <a href="{% url 'view_survey_list' %}" class="btn btn-primary">👁️ View Surveys</a>
+
+            </div>
+
+            <hr>
+            <h3 class="section-title">Latest Polls</h3>
+            <div class="list">
+                {% for question in latest_question %}
+                    <a href="{% url 'detail' question.id %}" class="list-item">
+                        <h5>{{ question.question_text }}</h5>
+                        <small class="muted">Published on {{ question.pub_date|date:"M d, Y" }}</small>
+                    </a>
+                {% empty %}
+                    <p>No polls available.</p>
+                {% endfor %}
+            </div>
+
+        {% elif user.role == "student" %}
+            <hr>
+            <h3 class="section-title">🗂️ Choose a Category to Vote</h3>
+            <div class="category-grid">
+                {% for category in categories %}
+                    <div class="category-card">
+                        <h4>{{ category.name }}</h4>
+                        <p>{{ category.description|default:"Explore questions in this category" }}</p>
+                        <a href="{% url 'category_polls' category.id %}" class="btn btn-primary">View Polls</a>
+                        
+                    </div>
+                {% empty %}
+                    <p>No categories available.</p>
+                {% endfor %}
             </div>
         {% endif %}
     {% endif %}
-
-    <hr>
-
-    
-    <h3 class="section-title">Latest Polls</h3>
-    <div class="list">
-        {% for question in latest_question %}
-            <a href="{% url 'detail' question.id %}" class="list-item">
-                <h5>{{ question.question_text }}</h5>
-                <small class="muted">Published on {{ question.pub_date|date:"M d, Y" }}</small>
-            </a>
-        {% empty %}
-            <p>No polls available.</p>
-        {% endfor %}
-    </div>
 </div>
 {% endblock %}

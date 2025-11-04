@@ -31,5 +31,14 @@ urlpatterns = [
     path('login/',views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path("signup/", views.signup_view, name="signup"),
+    path('category/<int:category_id>/', views.category_polls, name='category_polls'),
+
+    path('create_survey/', views.create_survey, name='create_survey'),
+    path('select_survey_questions/', views.select_survey_questions, name='select_survey_questions'),
+    path('view_surveys/', views.view_surveys, name='view_surveys'),
+    path('survey/<int:survey_id>/take/', views.take_survey, name='take_survey'),
+    path('survey/<int:survey_id>/', views.view_survey, name='view_survey'),
+    path('surveys/', views.survey_list, name='survey_list'),
+    path('view_survey_list/', views.view_survey_list, name='view_survey_list'),
 ]
 

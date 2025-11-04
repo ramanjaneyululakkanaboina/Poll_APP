@@ -5,18 +5,32 @@
 <div class="poll-card">
     <h2>📊 Poll Results</h2>
 
+    <!-- Category Filter -->
+    <form method="get" class="filter-form mb-3">
+        <label for="category">Select Category:</label>
+        <select name="category" id="category" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if selected_category_id == cat.id %}selected{% endif %}>
+                    {{ cat.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
     {% if latest_question %}
-        <ul>
+        <ul class="poll-list">
             {% for question in latest_question %}
-                <li>
+                <li class="poll-item">
                     <a href="{% url 'results' question.id %}" class="btn-link">{{ question.question_text }}</a>
+                    <span class="muted">({{ question.category.name }})</span>
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>No polls are available.</p>
+        <p>No polls are available in this category.</p>
     {% endif %}
 
-    <a href="{% url 'index' %}" class="btn btn-primary">← Back to Home</a>
+    <a href="{% url 'index' %}" class="btn btn-primary mt-3">← Back to Home</a>
 </div>
 {% endblock %}

@@ -71,6 +71,7 @@ body {
     margin: 0px auto;
     margin-top: 50px;
     padding: 20px;
+    margin-bottom: 30px;
 }
 
 .page-title {
@@ -152,7 +153,12 @@ body {
     
 }
 
-/* Unified submit button */
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/*---------------- Unified submit button -------------*/
 .btn-submit {
     width: 100%;
     background: #E39332;
@@ -425,3 +431,153 @@ input[type="text"], input[type="number"], input[type="date"] {
 .link:hover {
     color: #333;
 }
+
+
+/*--------------------- Category filter form -------------------*/
+.filter-form {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-form label {
+    font-weight: bold;
+    color: #f8fafa;
+}
+
+.filter-form select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #a8a8a8;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.filter-form select:hover {
+    border-color: #0D5C6B;
+    background-color: #e8f4f5;
+}
+
+/*--------------------- Poll list --------------------*/
+.poll-list {
+    list-style: none;
+    padding: 0;
+}
+
+.poll-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.poll-item a {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.poll-item a:hover {
+    color: #E39332;
+}
+
+.muted {
+    font-size: 13px;
+    color: #777;
+}
+
+
+/* ---------------- CATEGORY CARDS ---------------- */
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.category-card {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(145deg, #eef9ff, #ffffff);
+}
+
+.category-card h4 {
+    color: #0D5C6B;
+    margin-bottom: 10px;
+}
+
+.category-card p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.category-card .btn {
+    background-color: #0D5C6B;
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 14px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.category-card .btn:hover {
+    background-color: #E39332;
+    color: #fff;
+}
+
+/* ---------------- FOOTER ---------------- */
+
+.site-footer {
+    background: linear-gradient(90deg, #0D5C6B, #E39332);
+    color: #fff;
+    text-align: center;
+    padding: 7px 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+.site-footer .footer-content {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    
+}
+
+.footer-links a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 5px;
+    font-weight: 500;
+}
+
+.footer-links a:hover {
+    color: #222;
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .site-footer {
+        font-size: 13px;
+        padding: 10px;
+    }
+}
+
+

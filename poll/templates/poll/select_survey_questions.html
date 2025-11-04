@@ -1,0 +1,35 @@
+{% extends "home.html" %}
+{% block title %}Select Questions{% endblock %}
+{% block content %}
+<div class="poll-card">
+    <h2>✅ Select Questions for Survey</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for q in questions %}
+            <div class="question-box">
+                <label>
+                    <input type="checkbox" name="questions" value="{{ q.id }}" class="question-checkbox">
+                    <b>{{ q.category.name }}</b> — {{ q.question_text }}
+                </label>
+            </div>
+        {% empty %}
+             <p>No questions available.</p>
+        {% endfor %}
+        <button type="submit" id="submitBtn" class="btn btn-primary" disabled>✔ Confirm Selection</button>
+    </form>
+</div>
+<!-- ✅ JavaScript to enable/disable submit -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const checkboxes = document.querySelectorAll(".question-checkbox");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function toggleSubmit() {
+        const checked = Array.from(checkboxes).some(cb => cb.checked);
+        submitBtn.disabled = !checked;
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener("change", toggleSubmit));
+});
+</script>
+{% endblock %}

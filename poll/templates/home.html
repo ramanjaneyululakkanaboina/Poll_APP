@@ -19,6 +19,8 @@
                     {% if user.role == 'admin' %}
                         <li><a href="{% url 'create_poll' %}">+ Create Poll</a></li>
                         <li><a href="{% url 'view_votes' %}">View Votes</a></li>
+                    {% else %}
+                        <li><a href="{% url 'survey_list' %}">Surveys</a></li>
                     {% endif %}
                     <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
@@ -35,4 +37,15 @@
     </main>
 
 </body>
+<footer class="site-footer">
+    <div class="footer-content">
+        <p>© PollApp — Created by Ram.</p>
+        <p class="footer-links">
+            <a href="{% url 'index' %}">Home</a> |
+            <a href="#">About</a> |
+            <a href="#">Contact</a>
+        </p>
+    </div>
+</footer>
+
 </html>

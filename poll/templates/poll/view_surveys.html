@@ -1,0 +1,17 @@
+{% extends "home.html" %}
+{% block title %}Available Surveys{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>🗳 Active Surveys</h2>
+    {% for survey in surveys %}
+        <div class="card">
+            <h4>{{ survey.name }}</h4>
+            <p>{{ survey.description }}</p>
+            <small>Ends on: {{ survey.end_time|date:"M d, Y H:i" }}</small><br>
+            <a href="{% url 'take_survey' survey.id %}" class="btn btn-primary">Take Survey</a>
+        </div>
+    {% empty %}
+        <p>No active surveys available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

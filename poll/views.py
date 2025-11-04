@@ -1,16 +1,29 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import Question, Choice
+from .models import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .forms import Questionform, SignupForm
+from .forms import *
+from django.utils import timezone
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 @login_required
 def index(request):
-    latest_question = Question.objects.filter(is_active=True).order_by('-pub_date')[:5]
-    return render(request, 'poll/index.html', {'latest_question': latest_question })
+    if request.user.role == 'admin':
+        latest_question = Question.objects.order_by('-pub_date')[:5]
+        return render(request, 'poll/index.html', {'latest_question': latest_question})
+    else:
+        categories = Category.objects.all()
+        return render(request, 'poll/index.html', {'categories': categories})
+
+@login_required
+def category_polls(request, category_id):
+    """Show all active questions for a specific category."""
+    category = get_object_or_404(Category, id=category_id)
+    questions = Question.objects.filter(category=category, is_active=True)
+    return render(request, 'poll/category_polls.html', {'category': category, 'questions': questions})
 
 @login_required
 def detail(request, question_id):
@@ -68,9 +81,25 @@ def create_poll(request):
 def view_votes(request):
     if request.user.role != 'admin':
         return redirect('index')
+
+    
+    categories = Category.objects.all()
+
+    
+    selected_category_id = request.GET.get("category")
+
+    if selected_category_id:
+        latest_question = Question.objects.filter(category_id=selected_category_id).order_by('-pub_date')
     else:
         latest_question = Question.objects.order_by('-pub_date')[:5]
-        return render(request, 'poll/view_votes.html', {'latest_question': latest_question })
+
+    context = {
+        'latest_question': latest_question,
+        'categories': categories,
+        'selected_category_id': int(selected_category_id) if selected_category_id else None,
+    }
+
+    return render(request, 'poll/view_votes.html', context)
 
 def signup_view(request):
     if request.method == 'POST':
@@ -97,3 +126,126 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')                 
+
+@login_required
+def create_survey(request):
+    if request.user.role != 'admin':
+        return redirect('index')
+
+    if request.method == 'POST':
+        form = SurveyForm(request.POST)
+        if form.is_valid():
+            survey = form.save(commit=False)
+            survey.created_by = request.user
+            survey.start_time = timezone.now()
+            survey.save()
+            request.session['survey_id'] = survey.id
+            return redirect('select_survey_questions')
+    else:
+        form = SurveyForm()
+    
+    return render(request, 'poll/create_survey.html', {'form': form})
+
+@login_required
+def select_survey_questions(request):
+    if request.user.role != 'admin':
+        return redirect('index')
+
+    survey_id = request.session.get('survey_id')
+    if not survey_id:
+        return redirect('create_survey')
+
+    questions = Question.objects.all().select_related('category')
+
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('questions')
+        survey = Survey.objects.get(id=survey_id)
+        survey.questions.set(selected_ids)
+        survey.save()
+        return redirect('index')
+
+    return render(request, 'poll/select_survey_questions.html', {'questions': questions})
+
+@login_required
+def view_surveys(request):
+    surveys = Survey.objects.filter(end_time__gt=timezone.now(), is_active=True)
+    return render(request, 'poll/view_surveys.html', {'surveys': surveys})
+
+@login_required
+def view_survey(request, survey_id):
+    # Only admins can view survey details
+    if request.user.role != 'admin':
+        return redirect('index')
+
+    survey = get_object_or_404(Survey, id=survey_id)
+    questions = survey.questions.prefetch_related('choice_set')
+
+    return render(request, 'poll/view_survey.html', {
+        'survey': survey,
+        'questions': questions
+    })
+
+@login_required
+def take_survey(request, survey_id):
+    # Only students can take survey
+    if request.user.role != 'student':
+        return redirect('index')
+
+    survey = get_object_or_404(Survey, id=survey_id)
+    questions = survey.questions.prefetch_related('choice_set')
+
+    # Check if survey expired
+    if survey.end_time < timezone.now():
+        if survey.is_active:
+            survey.is_active = False
+            survey.save()
+        return redirect("survey_list") 
+
+    if request.method == "POST":
+        for question in questions:
+            selected_choice_id = request.POST.get(f"choice_{question.id}")
+            if selected_choice_id:
+                choice = Choice.objects.get(id=selected_choice_id)
+                choice.votes += 1
+                choice.save()
+        return redirect("index")
+
+    return render(request, "poll/take_survey.html", {
+        "survey": survey,
+        "questions": questions,
+    })
+
+@login_required
+def survey_list(request):
+    # Only students can see survey list
+    if request.user.role != 'student':
+        return redirect('index')
+
+    now = timezone.now()
+    for survey in Survey.objects.filter(is_active = True):
+        survey.check_expiry()
+
+    active_surveys = Survey.objects.filter(is_active=True).order_by('-start_time')
+
+    return render(request, 'poll/survey_list.html', {
+        'active_surveys': active_surveys,
+        
+    })
+
+@login_required
+def view_survey_list(request):
+    # Only admin can see survey list
+    if request.user.role != 'admin':
+        return redirect('index')
+
+    now = timezone.now()
+    for survey in Survey.objects.filter(is_active = True):
+        survey.check_expiry()
+
+    active_surveys = Survey.objects.filter(is_active=True).order_by('-start_time')
+    expired_surveys = Survey.objects.filter(is_active=False).order_by('-end_time')
+
+    return render(request, 'poll/view_survey_list.html', {
+        'active_surveys': active_surveys,
+        'expired_surveys': expired_surveys,
+    })

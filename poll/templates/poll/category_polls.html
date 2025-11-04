@@ -1,0 +1,22 @@
+{% extends "home.html" %}
+{% block title %}{{ category.name }} Polls{% endblock %}
+
+{% block content %}
+<div class="poll-card">
+    <h2>{{ category.name }} — Polls</h2>
+
+    {% if questions %}
+        <ul>
+            {% for question in questions %}
+                <li>
+                    <a href="{% url 'detail' question.id %}" class="btn-link">{{ question.question_text }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No polls available in this category.</p>
+    {% endif %}
+
+    <a href="{% url 'index' %}" class="btn btn-primary">← Back to Categories</a>
+</div>
+{% endblock %}

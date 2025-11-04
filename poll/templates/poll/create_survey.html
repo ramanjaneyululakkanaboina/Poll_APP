@@ -1,0 +1,13 @@
+{% extends "home.html" %}
+{% block title %}Create Survey{% endblock %}
+{% block content %}
+<div class="poll-card">
+    <h2>🧠 Create a New Survey</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Next → Select Questions</button>
+    </form>
+</div>
+{% endblock %}
