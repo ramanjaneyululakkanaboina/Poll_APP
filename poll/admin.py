@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import *
 
-
 @admin.action(description='Activate Selected Tickets')
 def activate_tickets(modeladmin, request, queryset):
     queryset.update(is_active = True)

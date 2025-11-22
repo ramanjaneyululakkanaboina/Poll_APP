@@ -1,4 +1,6 @@
 import csv
+from pathlib import Path
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from poll.models import CustomUser
 
@@ -9,7 +11,13 @@ class Command(BaseCommand):
         parser.add_argument('csv_file', type=str, help='Path to the CSV file with student data')
 
     def handle(self, *args, **options):
-        csv_file = options['csv_file']
+        csv_file = Path(options['csv_file'])
+        if not csv_file.is_absolute():
+            csv_file = Path(settings.BASE_DIR) / "poll" / "management" / "commands" / "files" / csv_file
+        
+        if not csv_file.exists():
+            self.stdout.write(self.style.ERROR(f"❌ File not found: {csv_file}"))
+            return
 
         with open(csv_file, newline='', encoding='utf-8') as file:
             reader = csv.DictReader(file)

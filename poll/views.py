@@ -8,6 +8,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 @login_required
 def index(request):
@@ -76,27 +77,45 @@ def create_poll(request):
             form = Questionform()
 
         return render(request, "poll/create_poll.html", {"question_form": form})
-
 @login_required
 def view_votes(request):
     if request.user.role != 'admin':
         return redirect('index')
-
     
     categories = Category.objects.all()
-
-    
     selected_category_id = request.GET.get("category")
 
-    if selected_category_id:
-        latest_question = Question.objects.filter(category_id=selected_category_id).order_by('-pub_date')
+    # Safe check for category validity
+    if selected_category_id and selected_category_id not in ["None", ""]:
+        try:
+            selected_category_id = int(selected_category_id)
+            latest_question = Question.objects.filter(category_id=selected_category_id).order_by('-pub_date')
+        except (ValueError, TypeError):
+            # If invalid ID or not found, fallback to all questions
+            latest_question = Question.objects.order_by('-pub_date')
+            selected_category_id = None
     else:
-        latest_question = Question.objects.order_by('-pub_date')[:5]
+        latest_question = Question.objects.order_by('-pub_date')
+        selected_category_id = None
+
+    # Pagination logic
+    paginat = Paginator(latest_question, 5)
+    page_num = request.GET.get('page')
+    page_obj = paginat.get_page(page_num)
+
+    current_page = page_obj.number
+    total_pages = paginat.num_pages
+    start_page = max(current_page - 1, 1)
+    end_page = min(start_page + 2, total_pages)
+    if end_page - start_page < 2:
+        start_page = max(end_page - 2, 1)
+    page_range = range(start_page, end_page + 1)
 
     context = {
-        'latest_question': latest_question,
+        'latest_question': page_obj,
         'categories': categories,
-        'selected_category_id': int(selected_category_id) if selected_category_id else None,
+        'selected_category_id': selected_category_id,
+        'page_range': page_range,
     }
 
     return render(request, 'poll/view_votes.html', context)

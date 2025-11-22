@@ -30,7 +30,33 @@
     {% else %}
         <p>No polls are available in this category.</p>
     {% endif %}
+     
+    <div class="pagination ">
+    <a href="{% url 'index' %}" class="btn btn-primary mt-3" id="back">← Back to Home</a>
 
-    <a href="{% url 'index' %}" class="btn btn-primary mt-3">← Back to Home</a>
+    {% if latest_question.has_previous %}
+        <a href="?{% if selected_category_id %}category={{ selected_category_id }}&{% endif %}page={{ latest_question.previous_page_number }}" class="page-link">Previous</a>
+    {% else %}
+        <span class="disabled">Previous</span>
+    {% endif %}
+
+    {% for i in page_range %}
+        {% if i == latest_question.number %}
+            <span class="active">{{ i }}</span>
+        {% else %}
+            <a href="?{% if selected_category_id %}category={{ selected_category_id }}&{% endif %}page={{ i }}" class="page-link">{{ i }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if latest_question.has_next %}
+        <a href="?{% if selected_category_id %}category={{ selected_category_id }}&{% endif %}page={{ latest_question.next_page_number }}" class="page-link">Next</a>
+    {% else %}
+        <span class="disabled">Next</span>
+    {% endif %}
+</div>
+
+
+
+    
 </div>
 {% endblock %}

@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand
 import csv
+import os
+from django.conf import settings
 from poll.models import CustomUser
 
 class Command(BaseCommand):
@@ -9,7 +11,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         filename = options['filename']
-        with open(filename, 'w', newline='', encoding='utf-8') as student_file:
+        
+        default_folder = os.path.join(settings.BASE_DIR,"poll","management","commands","files")
+        if not os.path.dirname(filename):
+            output_file = os.path.join(default_folder,filename)
+        else:
+            output_file = filename
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
+        with open(output_file, 'w', newline='', encoding='utf-8') as student_file:
             stdunt_dat = csv.writer(student_file)
             stdunt_dat.writerow(["username","role"])
 
